@@ -1,0 +1,61 @@
+.select-slot-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .react-calendar {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .react-calendar__tile {
+    position: relative;
+  }
+  
+  .highlighted-date {
+    background-color: #007bff !important;
+    color: white !important;
+    border-radius: 50%;
+  }
+  
+  .slots-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .slot-button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: 1px solid #007bff;
+    background: white;
+    color: #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .slot-button.selected, .slot-button:hover {
+    background: #007bff;
+    color: white;
+  }
+  
+  .confirm-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .confirm-button:disabled {
+    background: gray;
+    cursor: not-allowed;
+  }
+  

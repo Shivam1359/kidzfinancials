@@ -1,0 +1,86 @@
+.about{
+    margin: 100px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+}
+.about-left{
+    flex-basis:40%;
+    position: relative;
+}
+.about-right{
+    flex: basis 56%;
+
+}
+.about-img{
+    width: 100%;
+    border-radius: 10px;
+
+}
+.about h3{
+    font-weight: 600;
+    font-weight: 16px;
+    color: rgba(7, 84, 112, 0.9);
+}
+.about h2{
+    font-size: 35px;
+    color: #000f38;
+    margin: 10px 0;
+    max-width: 400px;
+}
+.about p{
+    color: #676767;
+    margin-bottom: 15px;
+}
+
+/* media queries    */
+
+@media (max-width: 1100px) { /* Adjust breakpoint if needed */
+    .about {
+        flex-direction: column;
+        gap: 30px; /* Ensures spacing when stacked */
+    }
+}
+
+@media (min-width: 801px) and (max-width: 1100px) {
+    .about {
+        flex-direction: row; /* Keeps horizontal layout */
+        align-items: center;
+        gap: 20px; /* Adds space between text and image */
+    }
+    
+    .about-left,
+    .about-right {
+        flex-basis: 48%; /* Keeps content balanced */
+    }
+}
+
+
+
+
+@media (max-width: 800px) {
+    .about {
+        flex-direction: column;
+        gap: 20px; /* Adds spacing between image and text */
+    }
+
+    .about-left {
+        flex-basis: 100%;
+        order: 2;
+        display: flex;
+        justify-content: center; /* Centers image */
+    }
+
+    .about-right {
+        flex-basis: 100%;
+        order: 1;
+        text-align: center; /* Centers text */
+    }
+
+    .about-img {
+        width: 100%; /* Reduce image width for better fit */
+        max-width: 350px; /* Prevents image from becoming too large */
+        border-radius: 10px;
+    }
+}
