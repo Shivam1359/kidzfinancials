@@ -45,8 +45,31 @@ const handleZoomCallback = async (req, res) => {
 // Send OTP
 const sendOtp = async (req, res) => {
     const { email } = req.body;
+    
+    // Validate email is provided
+    if (!email) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Email is required' 
+        });
+    }
+    
+    // Validate email format (basic validation)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Invalid email format' 
+        });
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000);
-    otpStore[email] = otp;
+    
+    // Store OTP with 5-minute expiration
+    otpStore[email] = {
+        code: otp,
+        expiresAt: Date.now() + (5 * 60 * 1000) // 5 minutes from now
+    };
 
     try {
         await sendOtpEmail(email, otp);
@@ -60,11 +83,16 @@ const sendOtp = async (req, res) => {
 // Verify OTP
 const verifyOtp = (req, res) => {
     const { email, otp } = req.body;
-    if (otpStore[email] == otp) {
+    
+    // Check if OTP exists and hasn't expired
+    if (otpStore[email] && 
+        otpStore[email].code == otp && 
+        otpStore[email].expiresAt > Date.now()) {
+        
         delete otpStore[email];
         res.json({ success: true, message: 'OTP verified' });
     } else {
-        res.status(400).json({ success: false, message: 'Invalid OTP' });
+        res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 };
 

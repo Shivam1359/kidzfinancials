@@ -11,8 +11,6 @@ router.get('/login', (req, res) => {
 
 router.get('/callback', authController.handleZoomCallback);
 
-// OTP routes
-router.post('/send-otp', authController.sendOtp);
-router.post('/verify-otp', authController.verifyOtp);
+// OTP routes were moved to appointmentRoutes.js
 
 module.exports = router;
