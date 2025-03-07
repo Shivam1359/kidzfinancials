@@ -9,7 +9,7 @@ const bookAppointment = async (req, res) => {
     console.log('📦 Request body received:', JSON.stringify(req.body, null, 2));
     
     try {
-        const { name, email, phone, address, service, date, time, start_time, selectedDateTime } = req.body;
+        const { name, email, phone, address, service, date, time, userTimezone, start_time, selectedDateTime } = req.body;
         
         // Check required fields
         if (!email) {
@@ -83,13 +83,17 @@ const bookAppointment = async (req, res) => {
         }
 
         console.log(`📅 Meeting date-time: ${meetingDateTime}`);
+
+        // Store user's timezone if provided
+        const clientTimezone = userTimezone || 'UTC';
+        console.log(`🌐 Client timezone: ${clientTimezone}`);
         
         // Set up meeting options with the correct start time
         const meetingOptions = {
             topic: service ? `${service} Consultation` : 'Financial Consultation',
             start_time: meetingDateTime,
             duration: 30,
-            timezone: 'UTC',
+            timezone: 'UTC', // Zoom API expects UTC
             settings: { 
                 host_video: true, 
                 participant_video: true, 
@@ -109,6 +113,7 @@ const bookAppointment = async (req, res) => {
         // This is crucial for the email to show the correct time
         if (originalSlot.date && originalSlot.time) {
             appointment.selectedSlot = originalSlot;
+            appointment.clientTimezone = clientTimezone; // Add user's timezone
         }
 
         // Update the selected slot as booked in the database

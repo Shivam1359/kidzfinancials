@@ -27,6 +27,7 @@ async function sendAppointmentEmail(email, name, meetingDetails) {
   
   // Use the selected slot information if available, otherwise fall back to Zoom's start_time
   let formattedDate, formattedTime;
+  let timezoneInfo = '';
   
   if (meetingDetails.selectedSlot && meetingDetails.selectedSlot.date && meetingDetails.selectedSlot.time) {
     // Use the actual selected date from the slot
@@ -41,7 +42,12 @@ async function sendAppointmentEmail(email, name, meetingDetails) {
     // Use the exact selected time from the slot
     formattedTime = meetingDetails.selectedSlot.time;
     
-    console.log(`📧 Using selected slot for email: ${formattedDate} at ${formattedTime}`);
+    // Add timezone information if available
+    if (meetingDetails.clientTimezone) {
+      timezoneInfo = ` (${meetingDetails.clientTimezone})`;
+    }
+    
+    console.log(`📧 Using selected slot for email: ${formattedDate} at ${formattedTime}${timezoneInfo}`);
   } else {
     // Fall back to Zoom API response time
     const zoomDateTime = new Date(meetingDetails.start_time);
@@ -69,7 +75,7 @@ Thank you for scheduling an appointment with KidzFinancials. We're looking forwa
 APPOINTMENT DETAILS:
 ------------------------------------------
 Date: ${formattedDate}
-Time: ${formattedTime}
+Time: ${formattedTime}${timezoneInfo}
 Duration: ${meetingDetails.duration} minutes
 Topic: ${meetingDetails.topic}
 ------------------------------------------
@@ -115,7 +121,7 @@ ${process.env.COMPANY_WEBSITE || 'www.kidzfinancials.com'}
       <div class="meeting-details">
         <h3>APPOINTMENT DETAILS</h3>
         <p><strong>Date:</strong> ${formattedDate}</p>
-        <p><strong>Time:</strong> ${formattedTime}</p>
+        <p><strong>Time:</strong> ${formattedTime}${timezoneInfo}</p>
         <p><strong>Duration:</strong> ${meetingDetails.duration} minutes</p>
         <p><strong>Topic:</strong> ${meetingDetails.topic}</p>
       </div>

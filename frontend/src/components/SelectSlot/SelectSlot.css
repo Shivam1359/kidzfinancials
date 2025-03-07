@@ -1,65 +1,178 @@
 .select-slot-container {
     text-align: center;
     padding: 20px;
-  }
-  
-  .react-calendar {
+    max-width: 800px;
+    margin: 100px auto 40px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.select-slot-container h2 {
+    color: rgba(7, 84, 112, 0.9);
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.select-slot-container h3 {
+    color: #000f38;
+    margin: 25px 0 15px;
+}
+
+/* Improved calendar styling */
+.react-calendar {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     margin: auto;
-    border: 1px solid #ddd;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    padding: 15px;
+    font-family: "Outfit", sans-serif;
+}
+
+.react-calendar__navigation {
+    margin-bottom: 15px;
+}
+
+.react-calendar__navigation button {
+    min-width: 40px;
+    background: none;
+    font-size: 16px;
+    color: #000f38;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    background-color: #f5f5f5;
     border-radius: 8px;
-  }
-  
-  .react-calendar__tile {
-    position: relative;
-  }
-  
-  .highlighted-date {
-    background-color: #007bff !important;
-    color: white !important;
+}
+
+.react-calendar__month-view__weekdays {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    color: rgba(7, 84, 112, 0.9);
+    padding: 5px 0;
+}
+
+.react-calendar__month-view__days__day {
+    padding: 10px;
     border-radius: 50%;
-  }
-  
-  .slots-container {
+}
+
+.react-calendar__tile {
+    padding: 12px 0;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+}
+
+.react-calendar__tile--now {
+    background: #f7f7f7;
+    border-radius: 10px;
+}
+
+/* Highlighted available dates */
+.highlighted-date {
+    background-color: rgba(7, 84, 112, 0.7) !important;
+    color: white !important;
+    border-radius: 50% !important;
+}
+
+.highlighted-date:hover {
+    background-color: rgba(7, 84, 112, 0.9) !important;
+}
+
+/* Time slots */
+.slots-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 15px;
-  }
-  
-  .slot-button {
-    padding: 10px 15px;
-    margin: 5px;
-    border: 1px solid #007bff;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.slot-button {
+    padding: 12px 18px;
+    border: 1px solid rgba(7, 84, 112, 0.5);
     background: white;
-    color: #007bff;
-    border-radius: 5px;
+    color: rgba(7, 84, 112, 0.9);
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .slot-button.selected, .slot-button:hover {
-    background: #007bff;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.slot-button.selected, .slot-button:hover {
+    background: rgba(7, 84, 112, 0.9);
     color: white;
-  }
-  
-  .confirm-button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: #28a745;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.confirm-button {
+    margin-top: 30px;
+    padding: 14px 28px;
+    background: rgba(7, 84, 112, 0.9);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-  }
-  
-  .confirm-button:disabled {
-    background: gray;
-    cursor: not-allowed;
-  }
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
 
-/* Add these styles to your existing CSS file */
+.confirm-button:hover:not(:disabled) {
+    background: rgba(7, 84, 112, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(7, 84, 112, 0.3);
+}
+
+.confirm-button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Loading indicators */
+.loading-indicator {
+    color: #666;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-indicator:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 2px solid rgba(7, 84, 112, 0.3);
+    border-top: 2px solid rgba(7, 84, 112, 0.9);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* For no available slots message */
+.no-slots {
+    margin: 20px 0;
+    color: #666;
+    font-style: italic;
+}
+
+/* Time zone indicator */
+.timezone-info {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
 
 /* Button loader */
 .loader-container {

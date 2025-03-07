@@ -1,111 +1,97 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// // import './index.css'
-// import React from "react";
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Navbar from "./components/Navbar/Navbar";
-// import Hero from './components/Hero/Hero';
-// import Services from "./components/Services/Services";
-// import Title from "./components/Title/Title";
-// import About from './components/About/About';
-// import Footer from './components/Footer/Footer';
-// import Blogs from './components/Blogs/Blogs';
-// import Contact from './components/Contact/Contact';
-// import Appointment from './components/Appointment/Appointment';
-// import RESP from './components/RESP/RESP';
-// const App = () => {
-//   return(
-//     <div>
-//       <Navbar />
-//       <Hero/>
-//       <div className="container">
-//         <Title subTitle='Our Service' title='What We Offer'/>
-//         <Services/>
-//         <About/>
-//         <Title subTitle='Blogs' title='Explore'/>
-//         <Blogs />
-//         <Title  title='Online Appointment'/>
-//         <Appointment/>
-//         <Title subTitle='Contact Us' title='Get in Touch'/>
-//         <Contact/>
-//         <Footer/>
-//         {/* <RESP/> */}
-//       </div>
-    
-//     </div>
-    
-//   )
+import React, { Suspense, lazy, useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import ErrorBoundary from "./components/common/ErrorBoundary";
+import LoadingSpinner from "./components/common/LoadingSpinner";
+import Footer from "./components/layout/Footer";
+import Navbar from "./components/layout/Navbar";
+
+// Lazy load page components for better performance with prefetching
+const HomePage = lazy(() => {
+  // Use a Promise to add a small delay to avoid blocking the main thread
+  return new Promise(resolve => {
+    const component = import("./pages/HomePage");
+    // Small delay to prevent long tasks
+    setTimeout(() => resolve(component), 0);
+  });
+});
+
+const SelectSlot = lazy(() => import("./pages/SelectSlot"));
+const RRSPService = lazy(() => import("./pages/services/RRSPService"));
+
+// Preload critical assets
+const preloadAssets = () => {
+  // Preconnect to Google Fonts
+  const link1 = document.createElement('link');
+  link1.rel = 'preconnect';
+  link1.href = 'https://fonts.googleapis.com';
+  document.head.appendChild(link1);
+
+  const link2 = document.createElement('link');
+  link2.rel = 'preconnect';
+  link2.href = 'https://fonts.gstatic.com';
+  link2.crossOrigin = 'anonymous';
+  document.head.appendChild(link2);
   
-// }
-
-// export default App;
-
-
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar/Navbar";
-import Hero from "./components/Hero/Hero";
-import Services from "./components/Services/Services";
-import Title from "./components/Title/Title";
-import About from "./components/About/About";
-import Footer from "./components/Footer/Footer";
-import Blogs from "./components/Blogs/Blogs";
-import Contact from "./components/Contact/Contact";
-import Appointment from "./components/Appointment/Appointment";
-import SelectSlot from "./components/SelectSlot/SelectSlot"; // ✅ Import SelectSlot component
-import RRSPService from "./pages/services/RRSPService";
-// import MortgageService from "./pages/services/MortgageService";
-// import PersonalLoanService from "./pages/services/PersonalLoanService";
-// import InsuranceService from "./pages/services/InsuranceService";
-// import TaxPlanningService from "./pages/services/TaxPlanningService";
-// import RetirementService from "./pages/services/RetirementService";
-// import AllServices from "./pages/services/AllServices";
-
-
-
+  // Preload critical CSS
+  const criticalCSS = document.createElement('link');
+  criticalCSS.rel = 'preload';
+  criticalCSS.as = 'style';
+  criticalCSS.href = '/src/index.css';
+  document.head.appendChild(criticalCSS);
+};
 
 const App = () => {
+  useEffect(() => {
+    // Run immediately
+    preloadAssets();
+    
+    // Prefetch other components with priority
+    const prefetchComponents = () => {
+      const prefetchQueue = [
+        () => import("./pages/HomePage"),
+        () => import("./pages/SelectSlot"),
+        () => import("./pages/services/RRSPService")
+      ];
+      
+      // Schedule prefetching with requestIdleCallback for better performance
+      if ('requestIdleCallback' in window) {
+        prefetchQueue.forEach(prefetch => {
+          window.requestIdleCallback(() => prefetch(), { timeout: 2000 });
+        });
+      } else {
+        // Fallback for browsers that don't support requestIdleCallback
+        let delay = 1000;
+        prefetchQueue.forEach(prefetch => {
+          setTimeout(() => prefetch(), delay);
+          delay += 500;
+        });
+      }
+    };
+    
+    // Run prefetching after a short delay
+    const prefetchTimeout = setTimeout(prefetchComponents, 2000);
+    
+    return () => clearTimeout(prefetchTimeout);
+  }, []);
+  
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        {/* Home Page */}
-        <Route
-          path="/"
-          element={
-            <>
-              <Hero />
-              <div className="container">
-                <Title subTitle="Our Service" title="What We Offer" />
-                <Services />
-                <About />
-                <Title subTitle="Blogs" title="Explore" />
-                <Blogs />
-                <Title title="Online Appointment" />
-                <Appointment />
-                <Title subTitle="Contact Us" title="Get in Touch" />
-                <Contact />
-              </div>
-              <Footer />
-            </>
-          }
-        />
-        {/* Appointment Slot Selection Page */}
-        <Route path="/select-slot" element={<SelectSlot />} /> {/* ✅ Add route for slot selection */}
-
-          {/* Service routes */}
-        {/* <Route path="/services" element={<AllServices />} /> */}
-        <Route path="/services/rrsp-resp" element={<RRSPService />} />
-        {/* <Route path="/services/mortgage" element={<MortgageService />} />
-        <Route path="/services/personal-loan" element={<PersonalLoanService />} />
-        <Route path="/services/insurance" element={<InsuranceService />} />
-        <Route path="/services/tax-planning" element={<TaxPlanningService />} />
-        <Route path="/services/retirement" element={<RetirementService />} /> */}
-      
-
-
-      </Routes>
+      <ErrorBoundary>
+        <div className="app-container">
+          <Navbar />
+          <main>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/select-slot" element={<SelectSlot />} />
+                <Route path="/services/rrsp-resp" element={<RRSPService />} />
+                {/* Add other service routes as needed */}
+              </Routes>
+            </Suspense>
+          </main>
+          <Footer />
+        </div>
+      </ErrorBoundary>
     </Router>
   );
 };
