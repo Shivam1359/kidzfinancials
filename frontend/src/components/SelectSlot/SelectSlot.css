@@ -89,33 +89,29 @@
     background-color: rgba(7, 84, 112, 0.9) !important;
 }
 
-/* Time slots */
 .slots-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.slot-button {
-    padding: 12px 18px;
-    border: 1px solid rgba(7, 84, 112, 0.5);
+    margin-top: 15px;
+  }
+  
+  .slot-button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: 1px solid #007bff;
     background: white;
-    color: rgba(7, 84, 112, 0.9);
-    border-radius: 8px;
+    color: #007bff;
+    border-radius: 5px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 500;
-}
-
-.slot-button.selected, .slot-button:hover {
-    background: rgba(7, 84, 112, 0.9);
+    transition: 0.3s;
+  }
+  
+  .slot-button.selected, .slot-button:hover {
+    background: #007bff;
     color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
+  }
+  
 .confirm-button {
     margin-top: 30px;
     padding: 14px 28px;

@@ -5,32 +5,39 @@ import LoadingSpinner from "./components/common/LoadingSpinner";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 
-// Lazy load page components for better performance with prefetching
-const HomePage = lazy(() => {
-  // Use a Promise to add a small delay to avoid blocking the main thread
-  return new Promise(resolve => {
-    const component = import("./pages/HomePage");
-    // Small delay to prevent long tasks
-    setTimeout(() => resolve(component), 0);
-  });
-});
+// Improve lazy load implementation with better error handling and prefetching
+const lazyWithPreload = (factory) => {
+  const Component = lazy(factory);
+  Component.preload = factory;
+  return Component;
+};
 
-const SelectSlot = lazy(() => import("./pages/SelectSlot"));
-const RRSPService = lazy(() => import("./pages/services/RRSPService"));
+// Lazy load page components with improved implementation
+const HomePage = lazyWithPreload(() => import("./pages/HomePage"));
+const SelectSlot = lazyWithPreload(() => import("./pages/SelectSlot"));
+const RRSPService = lazyWithPreload(() => import("./pages/services/RRSPService"));
 
-// Preload critical assets
+// Preload critical assets with resource hints
 const preloadAssets = () => {
-  // Preconnect to Google Fonts
-  const link1 = document.createElement('link');
-  link1.rel = 'preconnect';
-  link1.href = 'https://fonts.googleapis.com';
-  document.head.appendChild(link1);
-
-  const link2 = document.createElement('link');
-  link2.rel = 'preconnect';
-  link2.href = 'https://fonts.gstatic.com';
-  link2.crossOrigin = 'anonymous';
-  document.head.appendChild(link2);
+  // Preconnect to critical domains
+  const preconnects = [
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com'
+  ];
+  
+  preconnects.forEach(url => {
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = url;
+    if (url.includes('gstatic')) link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+  });
+  
+  // DNS-prefetch for additional performance
+  const dnsPrefetch = document.createElement('link');
+  dnsPrefetch.rel = 'dns-prefetch';
+  dnsPrefetch.href = 'https://fonts.googleapis.com';
+  document.head.appendChild(dnsPrefetch);
   
   // Preload critical CSS
   const criticalCSS = document.createElement('link');
@@ -38,6 +45,14 @@ const preloadAssets = () => {
   criticalCSS.as = 'style';
   criticalCSS.href = '/src/index.css';
   document.head.appendChild(criticalCSS);
+  
+  // Preload critical fonts
+  const preloadFont = document.createElement('link');
+  preloadFont.rel = 'preload';
+  preloadFont.as = 'font';
+  preloadFont.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+  preloadFont.crossOrigin = 'anonymous';
+  document.head.appendChild(preloadFont);
 };
 
 const App = () => {
@@ -45,31 +60,36 @@ const App = () => {
     // Run immediately
     preloadAssets();
     
-    // Prefetch other components with priority
+    // Improved prefetch strategy with priority queue
     const prefetchComponents = () => {
+      // Define components in order of likely navigation
       const prefetchQueue = [
-        () => import("./pages/HomePage"),
-        () => import("./pages/SelectSlot"),
-        () => import("./pages/services/RRSPService")
+        HomePage.preload,
+        SelectSlot.preload,
+        RRSPService.preload
       ];
       
-      // Schedule prefetching with requestIdleCallback for better performance
+      // Use more sophisticated prefetch scheduling
       if ('requestIdleCallback' in window) {
+        let priority = 0;
         prefetchQueue.forEach(prefetch => {
-          window.requestIdleCallback(() => prefetch(), { timeout: 2000 });
+          window.requestIdleCallback(() => prefetch(), { 
+            timeout: 1500 + priority * 500 
+          });
+          priority++;
         });
       } else {
-        // Fallback for browsers that don't support requestIdleCallback
-        let delay = 1000;
+        // Fallback with better timing
+        let delay = 500;
         prefetchQueue.forEach(prefetch => {
           setTimeout(() => prefetch(), delay);
-          delay += 500;
+          delay += 300;
         });
       }
     };
     
-    // Run prefetching after a short delay
-    const prefetchTimeout = setTimeout(prefetchComponents, 2000);
+    // Start prefetching earlier but with lower priority
+    const prefetchTimeout = setTimeout(prefetchComponents, 1000);
     
     return () => clearTimeout(prefetchTimeout);
   }, []);

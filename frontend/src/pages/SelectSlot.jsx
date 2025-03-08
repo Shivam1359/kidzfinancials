@@ -70,8 +70,12 @@ const SelectSlot = () => {
       const result = await book(state.userDetails);
       if (result.success) {
         alert(`Meeting Scheduled! Join here: ${result.appointment.join_url}`);
-        // Optionally navigate to a confirmation page
-        // navigate('/booking-confirmation', { state: { appointmentDetails: result.appointment } });
+        
+        // Reset selected slot after successful booking
+        setSelectedSlot(null);
+        
+        // No need for page reload - the hook will refresh the available slots
+        // for the current date automatically when the book() function is called
       }
     } catch (error) {
       alert(error.message || 'Failed to book appointment. Please try again.');

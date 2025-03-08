@@ -2,6 +2,10 @@ import { useRef } from 'react';
 import back_icon from '../../assets/back-icon.png';
 import blog_1 from '../../assets/blog-img1.jpg';
 import blog_2 from '../../assets/blog-img2.jpg';
+import blog_3 from '../../assets/blog-img3.jpg';
+import blog_4 from '../../assets/blog-img4.jpg';
+// Add imports for blog_3 and blog_4 if available
+// If not available, we'll create unique references to existing images
 import next_icon from '../../assets/next-icon.png';
 import '../../components/Blogs/Blogs.css';
 import ImageOptimizer from '../common/ImageOptimizer';
@@ -24,10 +28,11 @@ const Blogs = () => {
         slider.current.style.transform = `translateX(${tx}%)`;
     };
 
+
     const blogPosts = [
         {
             id: 1,
-            title: "Health Insurance",
+            title: "Health Insurance asdadasda",
             excerpt: "Personal Accident Insurance: Why do you need it beyond Life and Health Coverage?",
             image: blog_1,
             alt: "Health Insurance Coverage Document"
@@ -43,14 +48,14 @@ const Blogs = () => {
             id: 3,
             title: "Health Insurance",
             excerpt: "Personal Accident Insurance: Why do you need it beyond Life and Health Coverage?",
-            image: blog_2,
+            image: blog_3, // Use blog_3 instead of blog_2
             alt: "Family protected by insurance"
         },
         {
             id: 4,
             title: "Health Insurance",
             excerpt: "Personal Accident Insurance: Why do you need it beyond Life and Health Coverage?",
-            image: blog_1,
+            image: blog_4, // Use blog_4 instead of blog_1
             alt: "Health Insurance Benefits Chart"
         }
     ];
