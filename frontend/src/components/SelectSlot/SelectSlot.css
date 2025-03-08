@@ -59,23 +59,84 @@
 .react-calendar__month-view__days__day {
     padding: 10px;
     border-radius: 50%;
+    color: #333; /* Ensure all dates are visible with dark text */
 }
 
+/* Improved calendar styling with distinct colors */
 .react-calendar__tile {
     padding: 12px 0;
     border-radius: 10px;
     font-weight: 500;
+    color: #333; /* Default text color for better visibility */
+    position: relative; /* For adding indicators */
 }
 
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
-    background-color: #f5f5f5;
+    background-color: rgba(7, 84, 112, 0.1);
     border-radius: 10px;
 }
 
+/* Today's date styling */
 .react-calendar__tile--now {
-    background: #f7f7f7;
+    background: rgba(255, 166, 0, 0.15) !important;
+    color: #e67700 !important;
     border-radius: 10px;
+    font-weight: bold;
+    border: 2px dashed rgba(255, 166, 0, 0.5);
+}
+
+/* Selected date styling */
+.react-calendar__tile--active,
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+    background: rgba(0, 123, 255, 0.8) !important;
+    color: white !important;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* Highlighted available dates - use a different color from selected date */
+.highlighted-date {
+    background-color: rgba(46, 184, 92, 0.7) !important;
+    color: white !important;
+   
+}
+
+.highlighted-date:hover {
+    background-color: rgba(46, 184, 92, 0.9) !important;
+}
+
+/* When a date is both today and highlighted */
+.react-calendar__tile--now.highlighted-date {
+    background-color: rgba(46, 184, 92, 0.7) !important;
+    color: white !important;
+    border: 2px dashed rgba(255, 166, 0, 0.5);
+}
+
+/* When a date is both selected and highlighted */
+.react-calendar__tile--active.highlighted-date {
+    background-color: rgba(0, 123, 255, 0.8) !important;
+    color: white !important;
+    position: relative;
+}
+
+/* Add a small indicator dot for available dates that are selected */
+.react-calendar__tile--active.highlighted-date::after {
+    content: "";
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: rgba(46, 184, 92, 0.9);
+    border-radius: 50%;
+}
+
+/* Outside month dates should be visible but muted */
+.react-calendar__month-view__days__day--neighboringMonth {
+    color: #757575;
 }
 
 /* Highlighted available dates */
@@ -96,21 +157,22 @@
     margin-top: 15px;
   }
   
-  .slot-button {
+/* Slot button styling - use a distinct color from calendar dates */
+.slot-button {
     padding: 10px 15px;
     margin: 5px;
-    border: 1px solid #007bff;
+    border: 1px solid rgba(7, 84, 112, 0.9);
     background: white;
-    color: #007bff;
+    color: rgba(7, 84, 112, 0.9);
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
-  }
+}
   
-  .slot-button.selected, .slot-button:hover {
-    background: #007bff;
+.slot-button.selected, .slot-button:hover {
+    background: rgba(7, 84, 112, 0.9);
     color: white;
-  }
+}
   
 .confirm-button {
     margin-top: 30px;
