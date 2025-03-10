@@ -7,6 +7,7 @@ const useAppointment = () => {
   const [highlightedDates, setHighlightedDates] = useState(new Set());
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [bookingSuccess, setBookingSuccess] = useState(null);
   
   // Use ref to cache data and avoid unnecessary refetches
   const cachedDates = useRef(new Map());
@@ -21,13 +22,35 @@ const useAppointment = () => {
     setSelectedSlot(null);
   }, [selectedDate]);
 
-  // Format date with memoization - MOVED UP to fix reference error
+  // Format date with memoization
   const formatDate = useCallback((date) => {
     return new Intl.DateTimeFormat('en-CA', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     }).format(new Date(date));
+  }, []);
+
+  // Format time in EST (Toronto) timezone
+  const formatTimeDisplay = useCallback((slot) => {
+    if (!slot) return null;
+    
+    try {
+      // Parse time in 24-hour format
+      const [hours, minutes] = slot.split(':');
+      const hour = parseInt(hours, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+      
+      // Return a formatted display time with the original time as reference
+      return {
+        displayTime: `${displayHour}:${minutes.padStart(2, '0')} ${ampm}`,
+        originalTime: slot, // Keep original time for sending to server
+      };
+    } catch (error) {
+      console.error('Error formatting time display:', error);
+      return { displayTime: slot, originalTime: slot };
+    }
   }, []);
 
   // Fetch available dates with optimized caching
@@ -76,9 +99,12 @@ const useAppointment = () => {
       
       const data = await fetchSlots(formattedDate);
       if (data.success) {
-        setAvailableSlots(data.slots);
+        // Simply format the time for display in EST, don't convert to local timezone
+        const formattedSlots = data.slots.map(slot => formatTimeDisplay(slot));
+        setAvailableSlots(formattedSlots);
+        
         // Cache this result
-        cachedSlots.current.set(formattedDate, data.slots);
+        cachedSlots.current.set(formattedDate, formattedSlots);
       } else {
         setAvailableSlots([]);
       }
@@ -86,7 +112,7 @@ const useAppointment = () => {
       console.error('Error loading available slots:', error);
       setAvailableSlots([]);
     }
-  }, [fetchSlots, formatDate]);
+  }, [fetchSlots, formatDate, formatTimeDisplay]);
 
   // Useeffect to call the function when selectedDate changes
   useEffect(() => {
@@ -103,33 +129,48 @@ const useAppointment = () => {
 
     const formattedDate = formatDate(selectedDate);
     
-    // Include the user's timezone in the booking data
-    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Get the original time to send to the server
+    const originalTime = selectedSlot.originalTime || selectedSlot;
     
+    // Log what we're sending to help with debugging
+    console.log('Booking appointment with:', {
+      date: formattedDate,
+      time: originalTime,
+    });
+    
+    // Build appointment data without any timezone conversion
     const appointmentData = {
       ...userDetails,
       date: formattedDate,
-      time: selectedSlot,
-      userTimezone,
+      time: originalTime,
       selectedDateTime: {
         date: formattedDate,
-        time: selectedSlot
+        time: originalTime
       }
     };
 
     try {
+      // Clear previous success message
+      setBookingSuccess(null);
+      
+      // Execute booking request
       const result = await bookAppointmentAsync(appointmentData);
       
-      // On successful booking, invalidate cached slots for this date
+      // On successful booking, update state immediately
       if (result.success) {
+        // First, update local state
+        setBookingSuccess(result); // Store success data for UI
+        setSelectedSlot(null); // Reset selected slot
+
+        // Clear cached data for this date and month immediately
         cachedSlots.current.delete(formattedDate);
         
-        // Also refresh the list of available dates
         const currentMonth = new Date(selectedDate).toISOString().slice(0, 7);
         cachedDates.current.delete(currentMonth);
         
-        // Immediately fetch updated slots for the current date
-        await fetchAvailableSlotsForDate(selectedDate);
+        // Fetch new data in the background
+        fetchAvailableSlotsForDate(selectedDate);
+        fetchDates(); // Refresh all available dates
       }
       
       return result;
@@ -137,7 +178,12 @@ const useAppointment = () => {
       console.error('Booking error:', error);
       throw new Error(error.message || 'Could not book appointment');
     }
-  }, [selectedDate, selectedSlot, formatDate, bookAppointmentAsync, fetchAvailableSlotsForDate]);
+  }, [selectedDate, selectedSlot, formatDate, bookAppointmentAsync, fetchAvailableSlotsForDate, fetchDates]);
+
+  // Clear booking success message
+  const clearBookingSuccess = useCallback(() => {
+    setBookingSuccess(null);
+  }, []);
 
   return {
     selectedDate,
@@ -149,6 +195,8 @@ const useAppointment = () => {
     loadingDates,
     loadingSlots,
     bookingLoading,
+    bookingSuccess,
+    clearBookingSuccess,
     book
   };
 };

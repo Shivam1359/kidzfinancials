@@ -3,13 +3,16 @@ const { sendAppointmentEmail } = require('../services/emailService');
 const pool = require('../config/db');
 const { DateTime } = require('luxon');
 
+// Set timezone for all DateTime operations
+const TIMEZONE = 'America/Toronto';
+
 // Book a new appointment
 const bookAppointment = async (req, res) => {
     console.log('⏳ Starting appointment booking process...');
     console.log('📦 Request body received:', JSON.stringify(req.body, null, 2));
     
     try {
-        const { name, email, phone, address, service, date, time, userTimezone, start_time, selectedDateTime } = req.body;
+        const { name, email, phone, address, service, date, time, start_time, selectedDateTime } = req.body;
         
         // Check required fields
         if (!email) {
@@ -64,36 +67,48 @@ const bookAppointment = async (req, res) => {
                     if (period === 'PM' && hour !== 12) hour += 12;
                     if (period === 'AM' && hour === 12) hour = 0;
                     
-                    meetingDateTime = `${originalSlot.date}T${hour.toString().padStart(2, '0')}:${minutes}:00.000Z`;
+                    // Use Toronto timezone (EST/EDT) - Notice we're using a proper ISO format
+                    meetingDateTime = DateTime.fromObject({
+                        year: parseInt(originalSlot.date.split('-')[0]),
+                        month: parseInt(originalSlot.date.split('-')[1]),
+                        day: parseInt(originalSlot.date.split('-')[2]),
+                        hour: hour,
+                        minute: parseInt(minutes)
+                    }, { zone: TIMEZONE }).toISO();
                 } else {
                     // Format: "14:30"
                     const [hours, minutes] = originalSlot.time.split(':');
-                    meetingDateTime = `${originalSlot.date}T${hours}:${minutes}:00.000Z`;
+                    
+                    // Use proper DateTime conversion to ensure correct timezone handling
+                    meetingDateTime = DateTime.fromObject({
+                        year: parseInt(originalSlot.date.split('-')[0]),
+                        month: parseInt(originalSlot.date.split('-')[1]),
+                        day: parseInt(originalSlot.date.split('-')[2]),
+                        hour: parseInt(hours),
+                        minute: parseInt(minutes)
+                    }, { zone: TIMEZONE }).toISO();
                 }
             } else if (start_time) {
                 // Just use start_time as is if it's all we have
                 meetingDateTime = start_time;
             } else {
                 // Absolute fallback
-                meetingDateTime = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+                meetingDateTime = DateTime.now().setZone(TIMEZONE).plus({minutes: 15}).toISO();
             }
         } catch (error) {
             console.error('❌ Error parsing date/time:', error);
-            meetingDateTime = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // Fallback
+            meetingDateTime = DateTime.now().setZone(TIMEZONE).plus({minutes: 15}).toISO(); // Fallback
         }
 
         console.log(`📅 Meeting date-time: ${meetingDateTime}`);
+        console.log(`📅 Parsed day of week: ${DateTime.fromISO(meetingDateTime).weekdayLong}`);
 
-        // Store user's timezone if provided
-        const clientTimezone = userTimezone || 'UTC';
-        console.log(`🌐 Client timezone: ${clientTimezone}`);
-        
         // Set up meeting options with the correct start time
         const meetingOptions = {
             topic: service ? `${service} Consultation` : 'Financial Consultation',
             start_time: meetingDateTime,
-            duration: 30,
-            timezone: 'UTC', // Zoom API expects UTC
+            duration: 60,
+            timezone: TIMEZONE, // Set timezone to Toronto
             settings: { 
                 host_video: true, 
                 participant_video: true, 
@@ -113,7 +128,24 @@ const bookAppointment = async (req, res) => {
         // This is crucial for the email to show the correct time
         if (originalSlot.date && originalSlot.time) {
             appointment.selectedSlot = originalSlot;
-            appointment.clientTimezone = clientTimezone; // Add user's timezone
+            
+            // Include a human-readable date/time for display purposes
+            const slotDateTime = DateTime.fromObject({
+                year: parseInt(originalSlot.date.split('-')[0]),
+                month: parseInt(originalSlot.date.split('-')[1]),
+                day: parseInt(originalSlot.date.split('-')[2]),
+                hour: getHourFromTimeString(originalSlot.time),
+                minute: getMinuteFromTimeString(originalSlot.time)
+            }, { zone: TIMEZONE });
+            
+            appointment.displayDateTime = {
+                dayOfWeek: slotDateTime.weekdayLong,
+                monthAndDay: slotDateTime.toFormat('MMMM d, yyyy'),
+                time: slotDateTime.toFormat('h:mm a'),
+                timezone: 'EST'
+            };
+            
+            console.log(`📧 Using selected slot for email: ${appointment.displayDateTime.dayOfWeek}, ${appointment.displayDateTime.monthAndDay} at ${appointment.displayDateTime.time} EST`);
         }
 
         // Update the selected slot as booked in the database
@@ -160,6 +192,54 @@ const bookAppointment = async (req, res) => {
     }
 };
 
+// Helper function to extract hours from time string
+function getHourFromTimeString(timeString) {
+    if (!timeString) return 0;
+    
+    try {
+        if (timeString.includes('AM') || timeString.includes('PM')) {
+            // Handle 12-hour format
+            const [timePart, period] = timeString.split(' ');
+            const [hours] = timePart.split(':');
+            let hour = parseInt(hours);
+            
+            // Convert to 24-hour
+            if (period === 'PM' && hour !== 12) hour += 12;
+            if (period === 'AM' && hour === 12) hour = 0;
+            
+            return hour;
+        } else {
+            // Handle 24-hour format
+            const [hours] = timeString.split(':');
+            return parseInt(hours);
+        }
+    } catch (error) {
+        console.error('Error parsing hours from time string:', error);
+        return 0;
+    }
+}
+
+// Helper function to extract minutes from time string
+function getMinuteFromTimeString(timeString) {
+    if (!timeString) return 0;
+    
+    try {
+        if (timeString.includes('AM') || timeString.includes('PM')) {
+            // Handle 12-hour format
+            const [timePart] = timeString.split(' ');
+            const [, minutes] = timePart.split(':');
+            return parseInt(minutes);
+        } else {
+            // Handle 24-hour format
+            const [, minutes] = timeString.split(':');
+            return parseInt(minutes);
+        }
+    } catch (error) {
+        console.error('Error parsing minutes from time string:', error);
+        return 0;
+    }
+}
+
 // Get available slots for a date
 const getAvailableSlots = async (req, res) => {
     const { date } = req.query;
@@ -167,7 +247,7 @@ const getAvailableSlots = async (req, res) => {
     try {
         const result = await pool.query(
             'SELECT time FROM meeting_slots WHERE date = $1 AND is_booked = false and date >= $2',
-            [date, DateTime.now().toISODate()]
+            [date, DateTime.now().setZone(TIMEZONE).toISODate()]
         );
 
         console.log(result.rows);
@@ -184,7 +264,7 @@ const getAvailableDates = async (req, res) => {
     try {
         const result = await pool.query(
             'SELECT DISTINCT date FROM meeting_slots WHERE is_booked = false and date >= $1',
-            [DateTime.now().toISODate()]
+            [DateTime.now().setZone(TIMEZONE).toISODate()]
         );
     
         const availableDates = result.rows.map(row => row.date.toISOString().split('T')[0]); // Format YYYY-MM-DD

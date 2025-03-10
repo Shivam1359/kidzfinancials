@@ -1,12 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import ImageOptimizer from "../../components/common/ImageOptimizer";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 import SEO from "../../components/common/SEO";
 import './RRSPService.css';
 import respImage from "/src/assets/img1.jpeg";
 import rrspImage from "/src/assets/img2.jpg";
 
+// Pre-load the CSS explicitly to prevent flash
+const preloadStyles = () => {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = '/src/pages/services/RRSPService.css';
+  document.head.appendChild(link);
+};
+
 const RRSPService = () => {
+  const [contentReady, setContentReady] = useState(false);
+  
+  // Handle page initialization
+  useEffect(() => {
+    // Scroll to top immediately
+    window.scrollTo(0, 0);
+    
+    // Preload stylesheet
+    preloadStyles();
+    
+    // Set a small delay to ensure CSS is applied before showing content
+    const timer = setTimeout(() => {
+      setContentReady(true);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Show loading spinner until content is ready
+  if (!contentReady) {
+    return (
+      <div className="service-page-loader">
+        <LoadingSpinner size="large" />
+      </div>
+    );
+  }
+
   return (
     <div className="service-page">
       <SEO 

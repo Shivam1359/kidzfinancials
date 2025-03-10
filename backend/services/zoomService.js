@@ -66,8 +66,8 @@ async function createZoomMeeting(meetingOptions = {}) {
             topic: meetingOptions.topic || 'Financial Consultation',
             type: 2, // Scheduled meeting
             start_time: meetingOptions.start_time || new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-            duration: meetingOptions.duration || 30,
-            timezone: meetingOptions.timezone || 'UTC',
+            duration: meetingOptions.duration || 60,
+            timezone: meetingOptions.timezone || 'America/Toronto', // Default to Toronto
             settings: { 
                 host_video: true, 
                 participant_video: true, 

@@ -48,6 +48,18 @@ a {
 
 main {
     flex: 1;
+    will-change: opacity; /* Optimize for animations */
+}
+
+/* Loading state for route changes */
+.js-loading {
+    cursor: wait;
+}
+
+/* JavaScript enabled styles */
+.js-loaded .app-container {
+    opacity: 1;
+    transition: opacity 0.3s ease;
 }
 
 @media (max-width: 1200px) {

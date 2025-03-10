@@ -2,6 +2,8 @@ import React, { Suspense, lazy, useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import PageTransition from './components/common/PageTransition';
+import ScrollToTop from './components/common/ScrollToTop';
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 
@@ -57,6 +59,13 @@ const preloadAssets = () => {
   document.head.appendChild(preloadFont);
 };
 
+// Loading component for suspense fallback
+const PageLoader = () => (
+  <div className="suspense-loader">
+    <LoadingSpinner size="large" />
+  </div>
+);
+
 const App = () => {
   useEffect(() => {
     // Run immediately
@@ -98,22 +107,25 @@ const App = () => {
   
   return (
     <Router>
+      <ScrollToTop />
       <ErrorBoundary>
         <div className="app-container">
           <Navbar />
-          <main>
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/select-slot" element={<SelectSlot />} />
-                <Route path="/services/rrsp-resp" element={<RRSPService />} />
-                <Route path="/services/insurance" element={<InsuranceService />} />
-                <Route path="/services/mortgage" element={<MortgageService />} />
-                
-                {/* Add other service routes as needed */}
-              </Routes>
-            </Suspense>
-          </main>
+          <PageTransition>
+            <main>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/select-slot" element={<SelectSlot />} />
+                  <Route path="/services/rrsp-resp" element={<RRSPService />} />
+                  <Route path="/services/insurance" element={<InsuranceService />} />
+                  <Route path="/services/mortgage" element={<MortgageService />} />
+                  
+                  {/* Add other service routes as needed */}
+                </Routes>
+              </Suspense>
+            </main>
+          </PageTransition>
           <Footer />
         </div>
       </ErrorBoundary>

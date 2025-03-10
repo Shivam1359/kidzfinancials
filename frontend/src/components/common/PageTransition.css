@@ -1,0 +1,31 @@
+.page-transition {
+  transition: opacity 0.25s ease-in-out;
+  min-height: 100vh;
+}
+
+.page-transition.fadeIn {
+  opacity: 1;
+}
+
+.page-transition.fadeOut {
+  opacity: 0;
+}
+
+.page-transition-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  font-size: 18px;
+  color: #075470;
+}
+
+/* Loading spinner for suspense fallback */
+.suspense-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  width: 100%;
+}

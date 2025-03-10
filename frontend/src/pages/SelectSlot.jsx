@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -8,7 +8,6 @@ import useAppointment from '../hooks/useAppointment';
 const SelectSlot = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const [userTimezone, setUserTimezone] = useState('');
   const { 
     selectedDate, 
     setSelectedDate,
@@ -19,14 +18,10 @@ const SelectSlot = () => {
     loadingDates,
     loadingSlots,
     bookingLoading,
+    bookingSuccess,
+    clearBookingSuccess,
     book
   } = useAppointment();
-
-  // Get user's timezone on component mount
-  useEffect(() => {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    setUserTimezone(timezone);
-  }, []);
 
   // Redirect if no user details are provided
   useEffect(() => {
@@ -35,51 +30,45 @@ const SelectSlot = () => {
     }
   }, [state, navigate]);
 
-  // Format time to user's local timezone
-  const formatTimeToLocal = (time, date) => {
-    if (!time || !date) return time;
-
+  // Format display time in 12-hour format with AM/PM
+  const formatDisplayTime = (time) => {
+    if (!time) return '';
+    
     try {
-      // Create a date object from the time string and date
-      const [hours, minutes] = time.split(':');
-      const dateObj = new Date(date);
-      dateObj.setHours(parseInt(hours, 10));
-      dateObj.setMinutes(parseInt(minutes, 10));
-      dateObj.setSeconds(0);
+      // If time is already an object with displayTime
+      if (typeof time === 'object' && time.displayTime) {
+        return time.displayTime;
+      }
       
-      // Format the time in the user's local time
-      return dateObj.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      });
+      // If time is a string in HH:MM format
+      const [hours, minutes] = time.split(':');
+      const hour = parseInt(hours, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12;
+      return `${displayHour}:${minutes} ${ampm}`;
     } catch (error) {
-      console.error('Error formatting time:', error);
-      return time; // Return original time if there's an error
+      console.error('Error formatting display time:', error);
+      return time; // Return original if error
     }
   };
 
   // Custom styling for highlighting available dates
   const tileClassName = ({ date }) => {
-    const formattedDate = date.toISOString().split('T')[0]; // Ensure correct comparison
+    const formattedDate = date.toISOString().split('T')[0];
     return highlightedDates.has(formattedDate) ? 'highlighted-date' : '';
   };
 
   const handleBookAppointment = async () => {
     try {
-      const result = await book(state.userDetails);
-      if (result.success) {
-        alert(`Meeting Scheduled! Join here: ${result.appointment.join_url}`);
-        
-        // Reset selected slot after successful booking
-        setSelectedSlot(null);
-        
-        // No need for page reload - the hook will refresh the available slots
-        // for the current date automatically when the book() function is called
-      }
+      await book(state.userDetails);
     } catch (error) {
       alert(error.message || 'Failed to book appointment. Please try again.');
     }
+  };
+
+  // Close the success notification modal
+  const closeSuccessModal = () => {
+    clearBookingSuccess();
   };
 
   if (!state?.userDetails) {
@@ -90,11 +79,9 @@ const SelectSlot = () => {
     <div className="select-slot-container">
       <h2>Select Appointment Date</h2>
       
-      {userTimezone && (
-        <div className="timezone-info">
-          Times are shown in your local timezone: {userTimezone}
-        </div>
-      )}
+      <div className="timezone-info">
+        <strong>All times are shown in Eastern Time (ET/EST - Toronto)</strong>
+      </div>
 
       {loadingDates ? (
         <div className="loading-indicator">Loading available dates...</div>
@@ -114,19 +101,16 @@ const SelectSlot = () => {
           <>
             <h3>Available Time Slots</h3>
             <div className="slots-container">
-              {availableSlots.map((slot, index) => {
-                const localTime = formatTimeToLocal(slot, selectedDate);
-                return (
-                  <button 
-                    key={index} 
-                    className={`slot-button ${selectedSlot === slot ? 'selected' : ''}`}
-                    onClick={() => setSelectedSlot(slot)}
-                    disabled={bookingLoading}
-                  >
-                    {localTime}
-                  </button>
-                );
-              })}
+              {availableSlots.map((slot, index) => (
+                <button 
+                  key={index} 
+                  className={`slot-button ${selectedSlot === slot ? 'selected' : ''}`}
+                  onClick={() => setSelectedSlot(slot)}
+                  disabled={bookingLoading}
+                >
+                  {formatDisplayTime(slot)}
+                </button>
+              ))}
             </div>
           </>
         ) : (
@@ -148,6 +132,35 @@ const SelectSlot = () => {
           'Confirm Booking'
         )}
       </button>
+      
+      {/* Success Modal - replace alert with this */}
+      {bookingSuccess && (
+        <div className="success-modal-overlay">
+          <div className="success-modal">
+            <h3>Appointment Confirmed!</h3>
+            {bookingSuccess.appointment.displayDateTime ? (
+              <p className="appointment-time">
+                Your appointment is scheduled for:<br/>
+                <strong>
+                  {bookingSuccess.appointment.displayDateTime.dayOfWeek}, {bookingSuccess.appointment.displayDateTime.monthAndDay} 
+                  at {bookingSuccess.appointment.displayDateTime.time} EST
+                </strong>
+              </p>
+            ) : (
+              <p>Your meeting has been scheduled successfully.</p>
+            )}
+            <p className="join-url">
+              <strong>Join URL:</strong> 
+              <a href={bookingSuccess.appointment.join_url} target="_blank" rel="noopener noreferrer">
+                {bookingSuccess.appointment.join_url}
+              </a>
+            </p>
+            <button className="close-modal-button" onClick={closeSuccessModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* Full-screen loading overlay for better UX */}
       {bookingLoading && (

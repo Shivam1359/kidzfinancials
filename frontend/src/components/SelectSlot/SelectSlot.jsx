@@ -36,9 +36,8 @@ const SelectSlot = () => {
     if (!date) return;
 
     try {
-      // Convert selectedDate to YYYY-MM-DD in UTC
+      // Convert selectedDate to YYYY-MM-DD
       const formattedDate = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'Asia/Kolkata', // Ensures IST time
           year: 'numeric',
           month: '2-digit',
           day: '2-digit'
@@ -46,16 +45,18 @@ const SelectSlot = () => {
         
       console.log('Selected Date:', formattedDate);
 
-      const response = await fetch(`http://localhost:5000/api/available-slots?date=${formattedDate}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/available-slots?date=${formattedDate}`);
       const data = await response.json();
 
       if (data.success) {
+        // Use slots directly from the server without timezone conversion
         setAvailableSlots(data.slots);
       } else {
         setAvailableSlots([]);
       }
     } catch (error) {
-      console.error('Error fetching slots:', error);
+      console.error('Error fetching available slots:', error);
+      setAvailableSlots([]);
     }
   };
 
@@ -132,6 +133,10 @@ const SelectSlot = () => {
   return (
     <div className="select-slot-container">
       <h2>Select a Date</h2>
+      
+      <div className="timezone-info">
+        <strong>All times are shown in Eastern Time (ET/EST - Toronto)</strong>
+      </div>
 
       {/* Calendar with highlighted available dates */}
       <Calendar 
@@ -144,16 +149,31 @@ const SelectSlot = () => {
         <>
           <h3>Available Time Slots</h3>
           <div className="slots-container">
-            {availableSlots.map((slot, index) => (
-              <button 
-                key={index} 
-                className={`slot-button ${selectedSlot === slot ? 'selected' : ''}`}
-                onClick={() => setSelectedSlot(slot)}
-                disabled={isLoading}
-              >
-                {slot}
-              </button>
-            ))}
+            {availableSlots.map((slot, index) => {
+              // Format the slot time for display
+              let displayTime = slot;
+              if (typeof slot === 'string') {
+                // Format 24-hour time to 12-hour time with AM/PM
+                const [hours, minutes] = slot.split(':');
+                const hour = parseInt(hours, 10);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                displayTime = `${displayHour}:${minutes} ${ampm}`;
+              } else if (slot && slot.displayTime) {
+                displayTime = slot.displayTime;
+              }
+              
+              return (
+                <button 
+                  key={index} 
+                  className={`slot-button ${selectedSlot === slot ? 'selected' : ''}`}
+                  onClick={() => setSelectedSlot(slot)}
+                  disabled={isLoading}
+                >
+                  {displayTime}
+                </button>
+              );
+            })}
           </div>
         </>
       ) : (

@@ -39,12 +39,24 @@ async function sendAppointmentEmail(email, name, meetingDetails) {
       day: 'numeric'
     });
     
-    // Use the exact selected time from the slot
-    formattedTime = meetingDetails.selectedSlot.time;
+    // Use the exact selected time from the slot - this is in EST
+    const timeStr = meetingDetails.selectedSlot.time;
+    
+    // Convert time from 24-hour to 12-hour format for better readability
+    let formattedTime;
+    try {
+      const [hours, minutes] = timeStr.split(':');
+      const hour = parseInt(hours, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+      formattedTime = `${displayHour}:${minutes} ${ampm} EST`;
+    } catch (e) {
+      formattedTime = timeStr; // Fallback to original format if parsing fails
+    }
     
     // Add timezone information if available
     if (meetingDetails.clientTimezone) {
-      timezoneInfo = ` (${meetingDetails.clientTimezone})`;
+      timezoneInfo = ` (Your local timezone: ${meetingDetails.clientTimezone})`;
     }
     
     console.log(`📧 Using selected slot for email: ${formattedDate} at ${formattedTime}${timezoneInfo}`);

@@ -54,6 +54,12 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Set default timezone for the application
+const TIMEZONE = 'America/Toronto';
+
+// Make timezone available to routes
+app.locals.timezone = TIMEZONE;
+
 const PORT = process.env.PORT || 5000;
 
 // Route prefixes

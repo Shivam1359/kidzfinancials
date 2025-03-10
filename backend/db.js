@@ -88,10 +88,10 @@ async function setupDatabase() {
       await dbClient.query(`
         INSERT INTO meeting_slots (id, date, time, is_booked)
         VALUES
-          (1, '2025-03-05', '16:00:00', FALSE),
-          (3, '2025-03-05', '18:00:00', FALSE),
+          (1, '2025-03-15', '16:00:00', FALSE),
+          (3, '2025-03-15', '18:00:00', FALSE),
           (2, '2025-03-09', '17:00:00', FALSE),
-          (4, '2025-03-06', '19:00:00', FALSE)
+          (4, '2025-03-16', '19:00:00', FALSE)
         ON CONFLICT (id)
         DO UPDATE SET
           date = EXCLUDED.date,
