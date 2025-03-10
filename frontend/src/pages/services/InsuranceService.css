@@ -1,0 +1,140 @@
+.service-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.service-header {
+    margin-top: 30px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.service-header h1 {
+    color: #000f38;
+    margin-bottom: 15px;
+    font-size: 36px;
+}
+
+.service-breadcrumb {
+    color: #666;
+}
+
+.service-breadcrumb a {
+    color: #075470;
+    text-decoration: none;
+}
+
+.service-sections {
+    margin-top: 40px;
+}
+
+.service-content {
+    margin-bottom: 60px;
+}
+
+.service-flex {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.service-flex-reverse {
+    flex-direction: row-reverse;
+}
+
+.service-text {
+    flex: 1;
+}
+
+.service-text h3 {
+    color: #075470;
+    margin: 25px 0 15px;
+}
+
+.service-text ul {
+    list-style: none;
+    padding: 0;
+}
+
+.service-text ul li {
+    margin: 12px 0;
+    padding-left: 25px;
+    position: relative;
+}
+
+.service-text ul li:before {
+    content: "•";
+    color: #075470;
+    font-size: 20px;
+    position: absolute;
+    left: 0;
+}
+
+.service-image {
+    flex: 1;
+    max-width: 500px;
+}
+
+.service-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.service-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-faq {
+    margin-top: 40px;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.service-contact {
+    text-align: center;
+    padding: 40px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+.service-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+@media (max-width: 768px) {
+    .service-flex {
+        flex-direction: column;
+    }
+    
+    .service-flex-reverse {
+        flex-direction: column;
+    }
+    
+    .service-image {
+        max-width: 100%;
+    }
+    
+    .service-buttons {
+        flex-direction: column;
+    }
+}
