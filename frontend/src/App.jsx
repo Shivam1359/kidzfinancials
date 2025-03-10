@@ -16,6 +16,8 @@ const lazyWithPreload = (factory) => {
 const HomePage = lazyWithPreload(() => import("./pages/HomePage"));
 const SelectSlot = lazyWithPreload(() => import("./pages/SelectSlot"));
 const RRSPService = lazyWithPreload(() => import("./pages/services/RRSPService"));
+const InsuranceService = lazyWithPreload(() => import("./pages/services/InsuranceService"));
+const MortgageService = lazyWithPreload(() => import("./pages/services/MortgageService"));
 
 // Preload critical assets with resource hints
 const preloadAssets = () => {
@@ -105,6 +107,9 @@ const App = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/select-slot" element={<SelectSlot />} />
                 <Route path="/services/rrsp-resp" element={<RRSPService />} />
+                <Route path="/services/insurance" element={<InsuranceService />} />
+                <Route path="/services/mortgage" element={<MortgageService />} />
+                
                 {/* Add other service routes as needed */}
               </Routes>
             </Suspense>
