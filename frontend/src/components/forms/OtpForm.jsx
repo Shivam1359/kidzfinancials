@@ -41,7 +41,7 @@ const OtpForm = ({ email, onVerified }) => {
         <>
           <input 
             type='text' 
-            placeholder='Enter OTP' 
+            placeholder='Enter OTP (Check Email)' 
             value={otp}
             onChange={(e) => setOtp(e.target.value)} 
           />

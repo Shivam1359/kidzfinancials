@@ -37,7 +37,7 @@ const Navbar = () => {
       </ul>
       
       <img 
-        src={showMenu ? "close-icon.png" : "menu-icon.png"} 
+        src={showMenu ? "menu_icon.png" : "menu_icon.png"} 
         alt={showMenu ? "Close Menu" : "Open Menu"} 
         onClick={() => setShowMenu(!showMenu)} 
         className="menu-icon" 

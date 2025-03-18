@@ -57,20 +57,24 @@ nav ul li .btn:hover {
 @media (max-width: 1000px){
     nav ul li{
         margin: 10px 15px;
+        
     }
 }
 
 @media (max-width: 840px){
     nav{
         padding: 15px 0;
+        background: rgba(7, 84, 112, 0.9);
+        
     }
     nav ul{
         position: fixed;
         top: 0;
         right: -200px;
         bottom: 0;
-        background: rgba(7, 84, 112, 0.9);
-        z-index: -1;
+        background: rgba(7, 84, 112, 0.9); /* Mobile menu background color */
+        
+        z-index: -1; /* Increased z-index to ensure menu appears above other elements */
         width: 200px;
         padding-top: 70px;
         transition: 0.5s;
@@ -85,7 +89,9 @@ nav ul li .btn:hover {
     .menu-icon{
         display:block;
         width: 30px;
+        height: 30px;
         cursor: pointer;
+        overflow: hidden;
 
     }
     .hide-mobile-menu{
@@ -93,6 +99,7 @@ nav ul li .btn:hover {
     }
 
     .show-mobile-menu {
+        background: rgba(7, 84, 112, 0.9);
         right: 0;
     }
 }

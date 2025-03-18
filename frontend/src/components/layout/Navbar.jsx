@@ -3,6 +3,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import '../../components/Navbar/Navbar.css';
 import logo from "/src/assets/react.svg";
+import menu_icon from "/src/assets/menu_icon.jpg";
 
 const Navbar = () => {
     const [sticky, setSticky] = useState(false);
@@ -76,7 +77,13 @@ const Navbar = () => {
                 aria-label={mobileMenu ? "Close menu" : "Open menu"}
                 aria-expanded={mobileMenu}
             >
-                <img src={logo} alt="" />
+                <img 
+        src={menu_icon} 
+        alt="menu" 
+        width="30"
+        height="30"
+    />
+                
             </button>
         </nav>
     );
