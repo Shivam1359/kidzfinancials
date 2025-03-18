@@ -1,50 +1,80 @@
-nav{
+nav {
     width: 100%;
-    /* background:#333 ; */
     color: #fff;
     padding: 4px 0;
     position: fixed;
-    top:0;
+    top: 0;
     left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     z-index: 10;
-    /* Add a semi-transparent background to ensure visibility */
-    background: rgba(7, 84, 112, 0.85);
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: rgb(7, 84, 112); /* Removed transparency */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
 }
 
-.logo{
-    width: 180;
+.logo {
+    width: 180px; /* Fixed: added px unit */
+
 }
 
-nav ul li{
+nav ul {
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
     display: inline-block;
     list-style: none;
     margin: 5px 20px;
     font-size: 16px;
 }
 
-/* Links should be easily distinguishable for better SEO and accessibility */
 nav ul li a {
     color: #fff;
     text-decoration: none;
     transition: all 0.3s ease;
     position: relative;
+    padding: 5px 0;
 }
 
 nav ul li a:hover {
     color: #e0e0e0;
 }
 
-.dark-nav{
-    background: rgba(7, 84, 112, 0.9);
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: #fff;
+    bottom: 0;
+    left: 0;
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+
+nav ul li .btn {
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.dark-nav {
+    background: rgb(7, 84, 112); /* Removed transparency */
     transition: 0.5s;
 }
-.menu-icon{
-    display:none;
+
+.menu-icon {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 nav ul li .btn:hover {
@@ -54,52 +84,78 @@ nav ul li .btn:hover {
 
 /* ------ media query ------ */
 
-@media (max-width: 1000px){
-    nav ul li{
+@media (max-width: 1000px) {
+    nav ul li {
         margin: 10px 15px;
-        
     }
 }
 
-@media (max-width: 840px){
-    nav{
-        padding: 15px 0;
-        background: rgba(7, 84, 112, 0.9);
-        
+@media (max-width: 840px) {
+    nav {
+        padding: 15px 5%;
     }
-    nav ul{
+    
+    nav ul {
         position: fixed;
         top: 0;
-        right: -200px;
+        right: -200px; /* Reduced from -250px */
         bottom: 0;
-        background: rgba(7, 84, 112, 0.9); /* Mobile menu background color */
-        
-        z-index: -1; /* Increased z-index to ensure menu appears above other elements */
-        width: 200px;
+        background: rgb(7, 84, 112); /* Solid background */
+        z-index: 100;
+        width: 200px; /* Reduced from 250px */
         padding-top: 70px;
         transition: 0.5s;
+        flex-direction: column;
+        align-items: flex-start;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
     }
-
-    nav ul li{
+    
+    nav ul li {
         display: block;
-        margin: 25px 40px;
-        
+        margin: 10px 20px; /* Reduced margins */
+        width: auto; /* Changed from 100% to auto */
+    }
+    
+    nav ul li a {
+        display: inline-block; /* Changed from block to inline-block */
+        padding: 6px 0; /* Reduced padding */
+        font-size: 15px; /* Slightly smaller font */
     }
 
-    .menu-icon{
-        display:block;
+    /* Fix for hover underline in mobile */
+    nav ul li a::after {
+        width: 0; /* Start with no underline */
+        max-width: 100%; /* Limit to text width */
+    }
+    
+    nav ul li a:hover::after {
+        width: 100%; /* Full width of text only */
+    }
+    
+    /* Disable hover effects on touch devices */
+    @media (hover: none) {
+        nav ul li a:hover::after {
+            width: 0; /* No underline on touch devices */
+        }
+        
+        nav ul li a:active::after {
+            width: 100%; /* Show underline on active instead */
+        }
+    }
+
+    .menu-icon {
+        display: block;
         width: 30px;
         height: 30px;
-        cursor: pointer;
-        overflow: hidden;
-
+        z-index: 101;
+        position: relative;
     }
-    .hide-mobile-menu{
-        right :-200px
+    
+    .hide-mobile-menu {
+        right: -200px; /* Match the negative right value above */
     }
 
     .show-mobile-menu {
-        background: rgba(7, 84, 112, 0.9);
         right: 0;
     }
 }
