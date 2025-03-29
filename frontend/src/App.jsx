@@ -17,6 +17,8 @@ const lazyWithPreload = (factory) => {
 // Lazy load page components with improved implementation
 const HomePage = lazyWithPreload(() => import("./pages/HomePage"));
 const SelectSlot = lazyWithPreload(() => import("./pages/SelectSlot"));
+const ServicesPage = lazyWithPreload(() => import("./pages/ServicesPage"));
+const ContactPage = lazyWithPreload(() => import("./pages/ContactPage"));
 const RRSPService = lazyWithPreload(() => import("./pages/services/RRSPService"));
 const InsuranceService = lazyWithPreload(() => import("./pages/services/InsuranceService"));
 const MortgageService = lazyWithPreload(() => import("./pages/services/MortgageService"));
@@ -79,6 +81,8 @@ const App = () => {
       // Define components in order of likely navigation
       const prefetchQueue = [
         HomePage.preload,
+        ServicesPage.preload,
+        ContactPage.preload,
         SelectSlot.preload,
         RRSPService.preload,
         InsuranceService.preload,
@@ -124,6 +128,8 @@ const App = () => {
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
+                  <Route path="/services" element={<ServicesPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
                   <Route path="/select-slot" element={<SelectSlot />} />
                   <Route path="/services/rrsp-resp" element={<RRSPService />} />
                   <Route path="/services/insurance" element={<InsuranceService />} />

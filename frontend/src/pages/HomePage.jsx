@@ -9,6 +9,10 @@ import Testimonials from "../components/sections/Testimonials";
 import Services from "../components/Services/Services";
 
 const HomePage = () => {
+  // Remove the location and useEffect for scrolling
+  // const location = useLocation();
+  // useEffect(() => { ... scrolling logic ... }, [location.hash]);
+
   return (
     <>
       <SEO 
@@ -18,7 +22,7 @@ const HomePage = () => {
       
       <Hero />
       <div className="container">
-        <Title subTitle="Our Service" title="What sWe Offer" />
+        <Title subTitle="Our Service" title="What We Offer" />
         <Services />
         <About />
         <Testimonials />

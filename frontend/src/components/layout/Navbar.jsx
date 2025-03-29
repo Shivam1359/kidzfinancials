@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
-import AppointmentForm from '../forms/AppointmentForm';
 import logo from "/src/assets/react.svg";
 
 const Navbar = () => {
@@ -155,23 +153,22 @@ const Navbar = () => {
                                     Home
                                 </RouterLink>
                             </li>
+                            <li>
+                                <RouterLink 
+                                    to="/services" 
+                                    onClick={closeMenu}
+                                    className={getLinkStyle(location.pathname.startsWith('/services'), mobileMenu)}
+                                    aria-current={location.pathname.startsWith('/services') ? 'page' : undefined}
+                                >
+                                    Services
+                                </RouterLink>
+                            </li>
                             
-                            {location.pathname === '/' ? (
+                            {location.pathname === '/' && (
                                 <>
-                                    <li><ScrollLink to='services' smooth={true} offset={-80} duration={500} onClick={closeMenu} className={getLinkStyle(false, mobileMenu)} role="button">Services</ScrollLink></li>
                                     <li><ScrollLink to='about' smooth={true} offset={-80} duration={500} onClick={closeMenu} className={getLinkStyle(false, mobileMenu)} role="button">About Us</ScrollLink></li>
                                     <li><ScrollLink to='blogs' smooth={true} offset={-80} duration={500} onClick={closeMenu} className={getLinkStyle(false, mobileMenu)} role="button">Blogs</ScrollLink></li>
                                 </>
-                            ) : (
-                                <li>
-                                    <RouterLink 
-                                        to="/#services"
-                                        onClick={closeMenu}
-                                        className={getLinkStyle(false, mobileMenu)}
-                                    >
-                                        Services
-                                    </RouterLink>
-                                </li>
                             )}
 
                             <li>
@@ -189,7 +186,7 @@ const Navbar = () => {
                                     </ScrollLink>
                                 ) : (
                                     <RouterLink 
-                                        to="/#contact"
+                                        to="/contact" // Update to /contact
                                         onClick={closeMenu} 
                                         className={`btn-primary ${mobileMenu ? 'w-full text-center' : ''}`}
                                         role="button"
@@ -198,40 +195,10 @@ const Navbar = () => {
                                     </RouterLink>
                                 )}
                             </li>
-                            <li>
-                                {/* Changed RouterLink to button to trigger modal */}
-                                <button 
-                                    onClick={() => { 
-                                        closeMenu(); 
-                                        setShowForm(true); 
-                                    }}
-                                    className={`btn-secondary ${mobileMenu ? 'w-full text-center mt-2' : 'ml-4'}`}
-                                    role="button"
-                                >
-                                    Book Now
-                                </button>
-                            </li>
                         </ul>
                     </div>
                 </div>
             </nav>
-
-            {/* Moved Appointment Modal Outside Nav - Matching Hero styles */}
-            {showForm && (
-                <div className='fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 animate-fade-in backdrop-blur-sm'> 
-                    <div className='bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-lg w-full relative transform transition-all animate-slide-up'> 
-                        <button 
-                            className='absolute top-3 right-3 text-neutral-400 hover:text-neutral-600 transition-colors' 
-                            onClick={() => setShowForm(false)}
-                            aria-label="Close appointment form"
-                        >
-                            <FaTimes size={20}/>
-                        </button>
-                        <h2 className="text-2xl font-semibold text-neutral-800 mb-6 text-center">Book Your Appointment</h2>
-                        <AppointmentForm onProceed={handleProceed} /> 
-                    </div>
-                </div>
-            )}
         </>
     );
 };

@@ -37,7 +37,7 @@ const InsuranceService = () => {
       {/* Header Section - Adjusted Styling */}
       <div className="bg-white border-b border-neutral-200 py-10 md:py-12">
         <div className={containerClass}>
-            <h1 className="text-3xl md:text-4xl font-bold text-primary-800 mb-2">Life Insurance Services</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-primary-800 mb-2 pt-8">Life Insurance Services</h1>
             <nav className="text-sm text-neutral-500" aria-label="breadcrumb">
                 <Link to="/" className="hover:text-primary-600">Home</Link>
                 <span className="mx-2">/</span>
@@ -173,7 +173,11 @@ const InsuranceService = () => {
                 <Link to="/select-slot" className="btn-secondary" aria-label="Schedule an insurance consultation">
                     Schedule a Consultation
                 </Link>
-                <Link to="/contact" className="btn-outline-primary border-secondary-500 text-secondary-600 hover:bg-secondary-200/50" aria-label="Contact us about insurance">
+                <Link 
+                    to="/contact"
+                    className="btn-outline-primary border-secondary-500 text-secondary-600 hover:bg-secondary-200/50" 
+                    aria-label="Contact us about insurance"
+                >
                     Contact Us
                 </Link>
             </div>
