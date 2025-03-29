@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
@@ -12,7 +11,6 @@ export default defineConfig({
       fastRefresh: true,
       // Remove the problematic babel plugin configuration
     }), 
-    tailwindcss(),
     compression({
       algorithm: 'brotliCompress', 
       exclude: [/\.(br)$/, /\.(gz)$/],

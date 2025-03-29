@@ -2,14 +2,72 @@
     margin: 100px auto;
     width: 90%;
     max-width: 1200px;
+    position: relative;
 }
 
 .appointment-content {
     text-align: center;
-    padding: 40px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    padding: 60px 40px;
+    background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.appointment-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/src/assets/pattern.svg');
+    background-size: cover;
+    opacity: 0.05;
+    z-index: -1;
+}
+
+.appointment-content::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: var(--primary-600);
+    border-radius: 50%;
+    opacity: 0.1;
+    top: -100px;
+    right: -100px;
+    z-index: -1;
+}
+
+.appointment-content h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--primary-800);
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.appointment-content p:first-of-type {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary-700);
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 5px 15px;
+    border-radius: 50px;
+    display: inline-block;
+}
+
+.appointment-content p:last-of-type {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--gray-700);
+    max-width: 600px;
+    margin: 0 auto 30px;
 }
 
 .appointment-overlay {
@@ -18,33 +76,59 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
 
 .appointment-popup {
     background: white;
-    padding: 30px;
-    border-radius: 10px;
+    padding: 40px;
+    border-radius: 20px;
     width: 90%;
-    max-width: 500px;
+    max-width: 550px;
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.4s ease;
+}
+
+.appointment-popup h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-700);
+    margin-bottom: 25px;
+    text-align: center;
 }
 
 .close-btn {
     position: absolute;
     right: 20px;
-    top: 15px;
+    top: 20px;
     font-size: 24px;
     background: none;
     border: none;
     cursor: pointer;
-    color: #666;
+    color: var(--gray-500);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+    transform: rotate(90deg);
 }
 
 .form-group {
@@ -68,25 +152,62 @@
 }
 
 .btn.dark-btn {
-    background-color: rgba(7, 84, 112, 0.9);
+    background-color: var(--primary-700);
     color: white;
-    padding: 12px 24px;
+    padding: 14px 32px;
     border: none;
-    border-radius: 5px;
+    border-radius: 50px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(7, 84, 112, 0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn.dark-btn:hover {
-    background-color: rgba(7, 84, 112, 1);
+    background-color: var(--primary-600);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(7, 84, 112, 0.2);
+}
+
+.btn.dark-btn:active {
+    transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .appointment-content {
+        padding: 40px 25px;
+    }
+    
+    .appointment-content h2 {
+        font-size: 28px;
+    }
+    
+    .appointment-content p:first-of-type {
+        font-size: 18px;
+    }
+    
+    .appointment-content p:last-of-type {
+        font-size: 16px;
+    }
+    
     .appointment-popup {
         width: 95%;
-        padding: 20px;
+        padding: 30px 20px;
     }
 
     .otp-section {

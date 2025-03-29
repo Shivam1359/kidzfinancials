@@ -1,15 +1,137 @@
-.title{
+.title {
     text-align: center;
-    color: rgba(7, 84, 112, 0.9);
-    font-size: 25px;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin: 70px 0 30px;
-
+    margin: 100px 0 60px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.title h2{
-    font-size: 32px;
-    color: #000f38; 
-    margin-top: 5px;
-    text-transform: none;
+
+.title p {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-600);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.title p::before,
+.title p::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-300), var(--primary-500));
+    transform: translateY(-50%);
+}
+
+.title p::before {
+    left: -55px;
+}
+
+.title p::after {
+    right: -55px;
+}
+
+.title h2 {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin: 0 0 5px;
+    position: relative;
+    display: inline-block;
+}
+
+.title h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    width: 70px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-400), var(--primary-700));
+    transform: translateX(-50%);
+    border-radius: 4px;
+}
+
+.title::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-100);
+    border-radius: 50%;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 5px var(--primary-50);
+    z-index: -1;
+}
+
+@media (max-width: 768px) {
+    .title {
+        margin: 70px 0 50px;
+    }
+    
+    .title p {
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+    
+    .title h2 {
+        font-size: 32px;
+    }
+    
+    .title p::before,
+    .title p::after {
+        width: 25px;
+    }
+    
+    .title p::before {
+        left: -35px;
+    }
+    
+    .title p::after {
+        right: -35px;
+    }
+    
+    .title h2::after {
+        width: 50px;
+        height: 3px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        margin: 50px 0 40px;
+    }
+    
+    .title p {
+        font-size: 12px;
+    }
+    
+    .title h2 {
+        font-size: 28px;
+    }
+    
+    .title p::before,
+    .title p::after {
+        width: 15px;
+    }
+    
+    .title p::before {
+        left: -25px;
+    }
+    
+    .title p::after {
+        right: -25px;
+    }
 }

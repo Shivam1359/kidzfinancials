@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaEnvelope, FaMapMarkerAlt, FaPaperPlane, FaPhone } from 'react-icons/fa';
 import '../../components/Contact/Contact.css';
 
 const Contact = () => {
@@ -55,37 +56,82 @@ const Contact = () => {
   return (
     <div className="contact">
       <div className="contact-col">
-        <h3>Send us a message</h3>
+        <h3>Let's Connect</h3>
         <p>
-          Investing early is the key to securing your and your family's financial future. Let us help you create investment plans that fit your unique needs.
+          Investing early is the key to securing your family's financial future. Our experts are ready to guide you through creating personalized investment plans tailored to your unique needs.
         </p>
         <ul>
-          <li>info@kidzfinancials.com</li>
-          <li>+1679479369</li>
-          <li>Brampton, Canada</li>
+          <li><FaEnvelope /> info@kidzfinancials.com</li>
+          <li><FaPhone /> +1 (647) 947-9369</li>
+          <li><FaMapMarkerAlt /> Brampton, Ontario, Canada</li>
         </ul>
       </div>
       <div className="contact-col">
+        <h3>Send us a message</h3>
         <form onSubmit={handleSubmit}>
-          <label>Your Name</label>
-          <input type="text" name="name" placeholder="Enter your name" required value={formData.name} onChange={handleChange} />
+          <div className="form-group-inline">
+            <div>
+              <label>Your Name</label>
+              <input 
+                type="text" 
+                name="name" 
+                placeholder="Enter your name" 
+                required 
+                value={formData.name} 
+                onChange={handleChange} 
+              />
+            </div>
+            <div>
+              <label>Email</label>
+              <input 
+                type="email" 
+                name="email" 
+                placeholder="Enter your email" 
+                required 
+                value={formData.email} 
+                onChange={handleChange} 
+              />
+            </div>
+          </div>
           
-          <label>Email</label>
-          <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} />
+          <div>
+            <label>Phone Number</label>
+            <input 
+              type="tel" 
+              name="phone" 
+              placeholder="Enter your mobile number" 
+              required 
+              value={formData.phone} 
+              onChange={handleChange} 
+            />
+          </div>
           
-          <label>Phone Number</label>
-          <input type="tel" name="phone" placeholder="Enter your mobile number" required value={formData.phone} onChange={handleChange} />
+          <div>
+            <label>Write your Message</label>
+            <textarea 
+              name="message" 
+              rows="4" 
+              placeholder="Tell us more about your investment goals" 
+              value={formData.message} 
+              onChange={handleChange} 
+            />
+          </div>
           
-          <label>Write your Message</label>
-          <textarea name="message" rows="6" placeholder="Tell us more about investment goals" value={formData.message} onChange={handleChange} />
+          <div>
+            <label>Attach File (optional)</label>
+            <input 
+              type="file" 
+              name="file" 
+              onChange={handleChange} 
+            />
+          </div>
           
-          <label>Attach File</label>
-          <input type="file" name="file" onChange={handleChange} />
-          
-          <button type="submit" className="btn dark-btn">Submit Now</button>
+          <button type="submit" className="btn dark-btn">
+            <FaPaperPlane /> Send Message
+          </button>
         </form>
 
-        {submitted && <div className="thank-you-message">Thanks for contacting us!</div>}
+        {submitted && <div className="thank-you-message">Thanks for contacting us! We'll be in touch soon.</div>}
         {error && <div className="error-message">{error}</div>}
       </div>
     </div>

@@ -20,9 +20,9 @@ const SelectSlot = lazyWithPreload(() => import("./pages/SelectSlot"));
 const RRSPService = lazyWithPreload(() => import("./pages/services/RRSPService"));
 const InsuranceService = lazyWithPreload(() => import("./pages/services/InsuranceService"));
 const MortgageService = lazyWithPreload(() => import("./pages/services/MortgageService"));
-const TaxPlanningService = lazyWithPreload(() => import("./pages/services/TaxPlanningService"));
-const RetirementPlanningService = lazyWithPreload(() => import("./pages/services/RetirementPlanningService"));
 const PersonalLoanService = lazyWithPreload(() => import("./pages/services/PersonalLoanService"));
+const RetirementService = lazyWithPreload(() => import("./pages/services/RetirementService"));
+const TaxPlanningService = lazyWithPreload(() => import("./pages/services/TaxPlanningService"));
 
 // Preload critical assets with resource hints
 const preloadAssets = () => {
@@ -80,7 +80,12 @@ const App = () => {
       const prefetchQueue = [
         HomePage.preload,
         SelectSlot.preload,
-        RRSPService.preload
+        RRSPService.preload,
+        InsuranceService.preload,
+        MortgageService.preload,
+        PersonalLoanService.preload,
+        RetirementService.preload,
+        TaxPlanningService.preload
       ];
       
       // Use more sophisticated prefetch scheduling
@@ -123,9 +128,9 @@ const App = () => {
                   <Route path="/services/rrsp-resp" element={<RRSPService />} />
                   <Route path="/services/insurance" element={<InsuranceService />} />
                   <Route path="/services/mortgage" element={<MortgageService />} />
-                  <Route path="/services/tax-planning" element={<TaxPlanningService />} />
-                  <Route path="/services/retirement" element={<RetirementPlanningService />} />
                   <Route path="/services/personal-loan" element={<PersonalLoanService />} />
+                  <Route path="/services/retirement" element={<RetirementService />} />
+                  <Route path="/services/tax-planning" element={<TaxPlanningService />} />
                   
                   {/* Add other service routes as needed */}
                 </Routes>
